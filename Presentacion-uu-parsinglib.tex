@@ -1,0 +1,485 @@
+\documentclass[12pt]{beamer}
+
+\usetheme{Oxygen}
+\usepackage{thumbpdf}
+\usepackage{wasysym}
+\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+\usepackage{pgf,pgfarrows,pgfnodes,pgfautomata,pgfheaps,pgfshade}
+%\usepackage{verbatim}
+\usepackage[spanish]{babel}
+\usepackage{listings}
+
+\lstdefinelanguage{uuagc}                   % name language
+                  []{haskell}               % base language
+                  {morekeywords={ATTR       % language keywords            
+                                ,SEM
+                                ,DATA
+                                ,TYPE
+                                ,lhs
+                                ,loc
+                                }
+                  ,sensitive=true           % syntax sentitive
+                  ,morestring=[d]"          % string delimiters
+                  ,morestring=[d]'
+                  }
+
+\lstnewenvironment{ag}{\lstset{ language=uuagc
+                              , identifierstyle=\ttfamily
+                              , showstringspaces=false
+                              , basicstyle=\scriptsize
+							  , keepspaces=true
+                              , stringstyle=\scriptsize
+                              , extendedchars=true
+                              , commentstyle=\color{blue}
+                      }
+                      }{}
+\lstnewenvironment{hs}{\lstset{ language=haskell
+                              , identifierstyle=\ttfamily
+                              , showstringspaces=false
+							  , basicstyle=\scriptsize
+							  , keepspaces=true
+                              , stringstyle=\scriptsize
+                              , extendedchars=true
+                              , commentstyle=\color{blue}
+                      }
+                  }{}
+
+\setbeamertemplate{navigation symbols}{\insertslidenavigationsymbol}
+
+
+
+\pdfinfo
+{
+  /Title       (uu-parsinglib)
+  /Creator     (TeX)
+  /Author      (Carlos Gomez)
+}
+
+
+\title[Libreria uu-parsing-lib]{
+\textbf{\large Libreria uu-parsinglib}
+%\textbf{\large CON}\\
+%\textbf{\large HASKELL}
+}
+
+%\subtitle{subtitulo}
+\author{Carlos Gomez}
+
+\institute[UMSS]{
+	Universidad Mayor de San Simón\\
+	Facultad de Ciencias y Tecnología\\
+	Carrera de Licenciatura en Informática\\
+    Comunidad Haskell San Simon}
+
+\date{17 de Septiembre, 2011}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\section*{}
+\begin{frame}
+  \frametitle{Contenido}
+  \tableofcontents[section=1,hidesubsections]
+\end{frame}
+
+%\AtBeginSection[]
+%{
+%  \frame<handout:0>
+%  {
+%    \frametitle{Contenido}
+%    \tableofcontents[currentsection,hideallsubsections]
+%  }
+%}
+
+%\AtBeginSubsection[]
+%{
+%  \frame<handout:0>
+%  {
+%    \frametitle{Contenido}
+%    \tableofcontents[sectionstyle=show/hide,subsectionstyle=show/shaded/hide]
+%  }
+%}
+
+\newcommand<>{\highlighton}[1]{%
+  \alt#2{\structure{#1}}{{#1}}
+}
+
+\newcommand{\icon}[1]{\pgfimage[height=1em]{#1}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% Content starts here %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introducción}
+
+\begin{frame}
+\begin{center}
+	\textbf{\Large Introducción}
+\end{center}
+\end{frame}
+
+\subsection{Libreria uu-parsinglib}
+
+\begin{frame}
+\frametitle{Libreria uu-parsinglib}
+
+\begin{block}{}
+    Es una herramienta \textbf{EDSL\footnote{EDSL: Embeded Domain Specific Language}} para \highlighton{Haskell}
+    que permite procesar una entrada a través de una descripción similar a la Gramática Contreta del lenguaje que se 
+    quiere procesar.
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Beneficios}
+	\begin{itemize}
+        \item Usar el mismo mecanismo de abstracción, tipado y nombrado de haskell.
+        \item Crear |parsers| al vuelo o en tiempo de ejecución del programa.
+        \item No depender de otros programas separados para generar el parser. Hacer todo en haskell.
+        \item Usar el mismo formalismo para describir scanners y parsers.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Beneficios (Continuacion)}
+	\begin{itemize}
+        \item Usar el mismo formalismo para describir funciones semánticas y parsers.
+        \item Trabajar con versiones limitadas de gramáticas infinitas.
+        \item Error-correcting parser combinators.
+        \item Disponer de combinadores para trabajar con gramaticas con permutaciones.
+        \item Disponer de un interface monadica para conocer informacion intermedia de parsing.
+	\end{itemize}
+\end{frame}
+
+%\begin{frame}
+%\frametitle{Haskell}
+%\begin{center}
+%	\scalebox{0.4}{\includegraphics{graphics/HaskellLogo.png}}
+%\end{center}
+
+\section{Combinadores}
+
+\begin{frame}
+\begin{center}
+	\textbf{\Large Combinadores}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Combinadores Basicos}
+\framesubtitle{Sus definiciones casi no dependen de otros combinadores}
+    \begin{itemize}
+        \item pSym
+        \item pReturn
+        \item pFail
+        \item Opcional $<<|>$
+        \item pAny
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Combinadores Derivados}
+\framesubtitle{Simples}
+Ejemplo de algunos Combinadores Derivados Simples:
+    \begin{itemize}
+        \item $<\$>$
+        \item $<\$$
+        \item $<*$
+        \item $*>$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Combinadore Derivados}
+\framesubtitle{Secuenciales}
+Ejemplo de algunos Combinadores Derivados Secuenciales:
+    \begin{itemize}
+        \item pList, pList\_ng, pListSep, pListSep\_ng
+        \item pList1, pList1\_ng, pList1Sep, pList1Sep\_ng
+        \item pSome
+        \item pMany
+        \item pFoldr, pFoldr\_ng, pFoldrSep
+        \item pFoldr1, pFoldr1\_ng, pFoldr1Sep
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Combinadores Derivados}
+\framesubtitle{Especiales}
+Ejemplo de algunos Combinadores Derivados Especiales:
+    \begin{itemize}
+         \item pMaybe
+         \item pEither
+         \item pPacked
+         \item pChainr, pChainl
+         \item pCount
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Combinadores Derivados}
+\framesubtitle{Repetidores}
+Ejemplo de algunos Combinadores Derivados Repetidores:
+    \begin{itemize}
+         \item pExact
+         \item pBetween
+         \item pAtLeast
+         \item pAtMost
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Combinadores Derivados}
+\framesubtitle{Permutadores}
+Ejemplo de algunos Combinadores Derivados Permutadores:
+    \begin{itemize}
+         \item $<||>$
+         \item $<<||>$
+         \item pmMany
+	\end{itemize}
+\end{frame}
+
+
+
+\section[Utilitarios]{Utilitarios para construir un Parser}
+\begin{frame}
+\begin{center}
+	\textbf{\Large Utilitarios para construir un parser}
+\end{center}
+\end{frame}
+
+\subsection[Caracteres]{Parser para caracteres}
+\begin{frame}
+\frametitle{Utilitarios}
+\framesubtitle{Parser para Caracteres Especiales}
+Ejemplo de algunos Combinadores especificos para caracteres:
+    \begin{itemize}
+        \item pLetter, pDigit, pLower, ... , pAscii
+        \item pSpaces
+	\end{itemize}
+\end{frame}
+
+\subsection[Lexeme]{Lexeme Parsers}
+\begin{frame}
+\frametitle{Lexeme Parsers}
+\framesubtitle{Parsers con una ideologia de lexeme}
+Ejemplo de algunos Combinadores definidos con la ideologia lexeme:
+    \begin{itemize}
+        \item pDot
+        \item pComma
+        \item pLBrace
+        \item pSymbol
+        \item pInteger
+        \item pParens
+        \item pTuple
+	\end{itemize}
+\end{frame}
+
+\subsection[Func. principales]{Funciones Principales para ejecutar el Parser}
+\begin{frame}
+\frametitle{Funciones Principales de uu-parsinglib}
+\framesubtitle{Funciones principales para ejecutar el parser}
+Las funciones principales para ejecutar el parser:
+    \begin{itemize}
+        \item execParser
+        \item runParser
+	\end{itemize}
+\end{frame}
+
+\section[Aplicacion]{Ejemplo de Aplicacion}
+\begin{frame}
+\begin{center}
+	\textbf{\Large Ejemplo de Aplicacion}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ejemplo de Aplicacion}
+Escribir un parser para reconocer un lenguaje de marcado de tipo XML.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Ejemplo de Aplicacion}
+\framesubtitle{Entrada}
+Ejemplo de una entrada para la aplicacion:
+\begin{block}{}
+\begin{verbatim}
+<html>
+    <big bold1="ok1" bold2="ok2" >
+         image
+    </big>
+</html>
+\end{verbatim}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Ejemplo de Aplicacion}
+\framesubtitle{Salida}
+Ejemplo de una salida para la aplicacion:
+\begin{block}{}
+\begin{verbatim}
+---NTag html
+   |
+   +---NText "\n    "
+   |
+   +---NTag big
+   |   | bold1 = "ok1"
+   |   | bold2 = "ok2"
+   |   |
+   |   +---NText "\n        image\n    "
+   |
+   +---NText "\n"
+\end{verbatim}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Tipo de dato: NTree}
+\framesubtitle{Estructura Rosadelfa (NTree)}
+\begin{block}{}
+\begin{ag}
+DATA NTree
+  | NTree Node ntrees: NTrees
+
+TYPE NTrees = [NTree]
+
+DATA Node
+  | NTag   tag          : String
+           attributes   : {[(String,String)]}
+  | NText  text         : String
+\end{ag}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Definicion de Parser}
+\framesubtitle{Parser para atributos}
+\begin{block}{}
+\begin{hs}
+pAttributes :: Parser [(String, String)]
+pAttributes 
+    = pListSep pSpaces pAttr
+    where pAttr :: Parser (String, String)
+          pAttr = (,) <$> pIdentifier 
+                       <* pSymbol "=" 
+                       <*> pQuotedString
+\end{hs}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Definicion de Parser}
+\framesubtitle{Parser para reconocer un tag}
+\begin{block}{}
+\begin{hs}
+-- | Parser para reconocer un tag con inicio y fin
+pTagged :: Parser NTree
+pTagged 
+    = do (tag,attrs) <- pTagInit
+         elems       <- pList_ng pXML
+         pTagEnd tag
+         return $ buildTag elems tag attrs
+\end{hs}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Definicion de Parser}
+\framesubtitle{pTagInit y pTagEnd}
+\begin{block}{}
+\begin{hs}
+-- | Parser para el tag de inicio
+pTagInit :: Parser (String, [(String, String)])
+pTagInit 
+    = (,) <$ pSymbol "<" 
+               <*> pIdentifier <*> pAttributes 
+          <* pSym '>'
+
+-- | Parser para el tag final
+pTagEnd :: String -> Parser String
+pTagEnd tag 
+    = pSymbol "<" *> pSymbol "/" *> 
+        (lexeme (pToken tag)) 
+    <* pSym '>'
+\end{hs}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Definicion de Parser}
+\framesubtitle{Parser para reconocer un tag especial}
+\begin{block}{}
+\begin{hs}
+-- | Parser para reconocer un tag especial (sin final)
+pSpecialTag :: Parser NTree
+pSpecialTag 
+    = buildTag [] 
+        <$ pSymbol "<" 
+             <*> pIdentifier <*> pAttributes <*
+           pSymbol "/" <* pSym '>'
+\end{hs}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Definicion de Parser}
+\framesubtitle{Parser para el texto}
+\begin{block}{}
+\begin{hs}
+-- Parser para reconocer cualquier texto dentro de un tag
+pText :: Parser NTree
+pText = buildText 
+         <$> pList1 (pSatisfy fcmp (Insertion "a" 'a' 5))
+    where fcmp c = c /= '<'
+\end{hs}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Definicion de Parser}
+\framesubtitle{Funcion principal, pXML}
+
+\begin{block}{}
+\begin{hs}
+-- | Parser que reconoce un tag normal/especial o texto
+pXML :: Parser NTree
+pXML = pText <|> pTagged <|> pSpecialTag
+\end{hs}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Definicion de Parser}
+\framesubtitle{Funcion principal, parser}
+
+\begin{block}{}
+\begin{hs}
+-- | funcion principal para el parser xml
+parser :: FilePath -> String -> NTree
+parser fn inp = runParser fn p inp
+    where p :: Parser NTree
+          p = pSpaces *> pXML <* pSpaces
+\end{hs}
+\end{block}
+\end{frame}
+
+
+\frame{
+  \vspace{2cm}
+  {\huge Fin de la Presentación}
+
+  \vspace{2cm}
+  \begin{flushright}
+    Carlos Gomez\\
+    \structure{\footnotesize{carliros.g@gmail.com}}\\
+  \end{flushright}
+}
+
+\end{document}
